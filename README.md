@@ -4,4 +4,4 @@
 
 #### References:
 
-* [Hexagonal Microservice](https://github.com/tensor-programming/hex-microservice/tree/part-1) (Go)
+* [Hexagonal Microservice](https://github.com/tensor-programming/hex-microservice) (Go)
