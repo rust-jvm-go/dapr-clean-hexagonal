@@ -4,7 +4,9 @@ go 1.20
 
 require (
 	github.com/cockroachdb/errors v1.9.1
+	github.com/json-iterator/go v1.1.12
 	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
+	github.com/vmihailenco/msgpack/v5 v5.3.5
 	gopkg.in/dealancer/validate.v2 v2.1.0
 )
 
@@ -16,7 +18,10 @@ require (
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.1.0 // indirect
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
+	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	golang.org/x/sys v0.0.0-20220209214540-3681064d5158 // indirect
 )
