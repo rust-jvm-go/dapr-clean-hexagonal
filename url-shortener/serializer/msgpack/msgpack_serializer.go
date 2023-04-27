@@ -6,9 +6,9 @@ import (
 	"url-shortener/domain"
 )
 
-type Redirect struct{}
+type RedirectMsgPackSerializer struct{}
 
-func (r *Redirect) Decode(input []byte) (*domain.Redirect, error) {
+func (m *RedirectMsgPackSerializer) Decode(input []byte) (*domain.Redirect, error) {
 	redirect := &domain.Redirect{}
 	if err := msgpack.Unmarshal(input, redirect); err != nil {
 		return nil, errors.Wrap(err, "serializer.Redirect.Decode")
@@ -17,7 +17,7 @@ func (r *Redirect) Decode(input []byte) (*domain.Redirect, error) {
 	return redirect, nil
 }
 
-func (r *Redirect) Encode(input *domain.Redirect) ([]byte, error) {
+func (m *RedirectMsgPackSerializer) Encode(input *domain.Redirect) ([]byte, error) {
 	rawMsg, err := msgpack.Marshal(input)
 	if err != nil {
 		return nil, errors.Wrap(err, "serializer.Redirect.Encode")

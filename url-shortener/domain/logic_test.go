@@ -116,7 +116,7 @@ func Test_redirectService_Store(t *testing.T) {
 				redirectRepository: tt.fields.redirectRepository,
 			}
 			if err := s.Store(tt.args.redirect); (err != nil) != tt.wantErr {
-				t.Errorf("Store() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Store() error = %v, wantErr = %v", err, tt.wantErr)
 			}
 		})
 	}
