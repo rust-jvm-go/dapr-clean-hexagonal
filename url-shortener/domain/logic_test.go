@@ -15,6 +15,10 @@ func (m mockRedirectRepository) Store(*Redirect) error {
 	return nil
 }
 
+func (m mockRedirectRepository) Info() string {
+	return ""
+}
+
 var mock1 = &mockRedirectRepository{}
 
 func TestNewRedirectService(t *testing.T) {

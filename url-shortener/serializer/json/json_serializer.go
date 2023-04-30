@@ -1,6 +1,7 @@
 package json
 
 import (
+	"fmt"
 	"github.com/cockroachdb/errors"
 	json "github.com/json-iterator/go"
 	"url-shortener/domain"
@@ -24,4 +25,8 @@ func (j *RedirectJsonSerializer) Encode(input *domain.Redirect) ([]byte, error) 
 	}
 
 	return rawMsg, nil
+}
+
+func (j *RedirectJsonSerializer) Info() string {
+	return fmt.Sprintf("From RedirectJsonSerializer")
 }

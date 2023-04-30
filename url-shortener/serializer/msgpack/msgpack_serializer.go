@@ -1,6 +1,7 @@
 package msgpack
 
 import (
+	"fmt"
 	"github.com/cockroachdb/errors"
 	"github.com/vmihailenco/msgpack/v5"
 	"url-shortener/domain"
@@ -24,4 +25,8 @@ func (m *RedirectMsgPackSerializer) Encode(input *domain.Redirect) ([]byte, erro
 	}
 
 	return rawMsg, nil
+}
+
+func (m *RedirectMsgPackSerializer) Info() string {
+	return fmt.Sprintf("From RedirectMsgPackSerializer")
 }
