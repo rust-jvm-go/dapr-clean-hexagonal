@@ -8,6 +8,8 @@ import (
 	"html/template"
 	"net/http"
 	"os"
+	"strings"
+	"url-shortener/repository/mongodb"
 )
 
 func main() {
@@ -22,6 +24,23 @@ func main() {
 		os.Exit(1)
 	}
 	fmt.Println(env.Info())
+
+	repository := *(*env.RedirectRepository).(*mongodb.MongoRepository)
+	defer func() {
+		fmt.Println("Disconnecting from MongoDB...")
+		if err := repository.Client.Disconnect(repository.Ctx); err != nil {
+			fmt.Printf("Could not disconnect from MongoDB, err: %v\n", err.Error())
+		}
+	}()
+
+	// Test repository client
+	_, err = repository.Find("Test 1")
+	if err != nil {
+		if strings.Contains(err.Error(), "cancelled") {
+			fmt.Printf("Could not find \"Test 1\", err: %v\n", err.Error())
+			os.Exit(1)
+		}
+	}
 
 	///////////////
 	// BunRouter

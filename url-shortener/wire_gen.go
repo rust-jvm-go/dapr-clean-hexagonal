@@ -14,16 +14,19 @@ import (
 
 // Injectors from wire.go:
 
-func InitializeSetup(ctx context.Context) (xsetup.Environment, error) {
-	dapr, err := xsetup.NewDaprClient()
+func InitializeSetup(ctx context.Context) (*xsetup.Environment, error) {
+	daprClient, err := xsetup.NewDaprClient()
 	if err != nil {
-		return xsetup.Environment{}, err
+		return nil, err
 	}
-	initConfig := xsetup.NewInitConfig(ctx, dapr)
+	initConfig, err := xsetup.NewInitConfig(ctx, daprClient)
+	if err != nil {
+		return nil, err
+	}
 	iRedirectRepository, err := mongodb.NewMongoRepository(initConfig)
 	if err != nil {
-		return xsetup.Environment{}, err
+		return nil, err
 	}
-	environment := xsetup.NewEnvironment(dapr, initConfig, iRedirectRepository)
+	environment := xsetup.NewEnvironment(daprClient, initConfig, iRedirectRepository)
 	return environment, nil
 }

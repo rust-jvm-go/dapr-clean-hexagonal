@@ -14,11 +14,13 @@ import (
 	"url-shortener/xsetup"
 )
 
-type mongoRepository struct {
-	ctx      context.Context
-	client   *mongo.Client
-	database *mongo.Database
-	timeout  time.Duration
+var redirects = "redirects"
+
+type MongoRepository struct {
+	Ctx      context.Context
+	Client   *mongo.Client
+	Database *mongo.Database
+	Timeout  time.Duration
 }
 
 func NewMongoRepository(initConfig xsetup.InitConfig) (domain.IRedirectRepository, error) {
@@ -32,12 +34,6 @@ func NewMongoRepository(initConfig xsetup.InitConfig) (domain.IRedirectRepositor
 		fmt.Printf("Could not connect to MongoDB, err: %v\n", err.Error())
 		return nil, err
 	}
-	defer func() {
-		fmt.Println("Disconnecting from MongoDB")
-		if err := mongoClient.Disconnect(ctx); err != nil {
-			fmt.Printf("Could not disconnect from MongoDB, err: %v\n", err.Error())
-		}
-	}()
 
 	err = mongoClient.Ping(ctx, readpref.Primary())
 	if err != nil {
@@ -45,15 +41,15 @@ func NewMongoRepository(initConfig xsetup.InitConfig) (domain.IRedirectRepositor
 	}
 
 	database := mongoClient.Database(initConfig.MongoDatabase)
-	r := &mongoRepository{
-		ctx:      ctx,
-		client:   mongoClient,
-		database: database,
-		timeout:  timeout,
+	r := &MongoRepository{
+		Ctx:      initConfig.Ctx,
+		Client:   mongoClient,
+		Database: database,
+		Timeout:  timeout,
 	}
 
-	// Some initial database test operations
-	err = initDBTests(ctx, r)
+	// Some initial Database test operations
+	err = initDBTests(r)
 	if err != nil {
 		return nil, err
 	}
@@ -61,16 +57,13 @@ func NewMongoRepository(initConfig xsetup.InitConfig) (domain.IRedirectRepositor
 	return r, nil
 }
 
-func (r *mongoRepository) Find(code string) (*domain.Redirect, error) {
-	ctx, cancel := context.WithTimeout(r.ctx, r.timeout)
-	defer cancel()
-
+func (r *MongoRepository) Find(code string) (*domain.Redirect, error) {
 	redirect := &domain.Redirect{}
 
-	collection := r.database.Collection("redirects")
+	collection := r.Database.Collection(redirects)
 
 	filter := bson.M{"code": code}
-	err := collection.FindOne(ctx, filter).Decode(&redirect)
+	err := collection.FindOne(r.Ctx, filter).Decode(&redirect)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, errors.Wrap(domain.ErrRedirectNotFound, "repository.Redirect.Find")
@@ -81,13 +74,10 @@ func (r *mongoRepository) Find(code string) (*domain.Redirect, error) {
 	return redirect, nil
 }
 
-func (r *mongoRepository) Store(redirect *domain.Redirect) error {
-	ctx, cancel := context.WithTimeout(r.ctx, r.timeout)
-	defer cancel()
-
-	collection := r.database.Collection("redirects")
+func (r *MongoRepository) Store(redirect *domain.Redirect) error {
+	collection := r.Database.Collection(redirects)
 	result, err := collection.InsertOne(
-		ctx,
+		r.Ctx,
 		bson.M{
 			"code":       redirect.Code,
 			"url":        redirect.URL,
@@ -103,12 +93,8 @@ func (r *mongoRepository) Store(redirect *domain.Redirect) error {
 	return nil
 }
 
-func (r *mongoRepository) Info() string {
-	return fmt.Sprintf("MongoDB database = %s", r.database.Name())
-}
-
-func initDBTests(ctx context.Context, r *mongoRepository) error {
-	collectionNames, err := r.database.ListCollectionNames(ctx, bson.D{}) // List all collections
+func initDBTests(r *MongoRepository) error {
+	collectionNames, err := r.Database.ListCollectionNames(r.Ctx, bson.D{}) // List all collections
 	if err != nil {
 		fmt.Printf("Could not list collection names, err: %v\n", err.Error())
 		return err
@@ -118,15 +104,15 @@ func initDBTests(ctx context.Context, r *mongoRepository) error {
 		fmt.Printf("collection = %s\n", collectionName)
 	}
 
-	collection := r.database.Collection("test_collection")
-	cursor, err := collection.Find(ctx, bson.D{})
+	collection := r.Database.Collection("test_collection")
+	cursor, err := collection.Find(r.Ctx, bson.D{})
 	if err != nil {
 		fmt.Printf("Error finding documents, err: %v\n", err)
 		return err
 	}
 
 	var documents []bson.M
-	if err = cursor.All(ctx, &documents); err != nil {
+	if err = cursor.All(r.Ctx, &documents); err != nil {
 		fmt.Printf("Error getting documents, err: %v\n", err)
 		return err
 	}

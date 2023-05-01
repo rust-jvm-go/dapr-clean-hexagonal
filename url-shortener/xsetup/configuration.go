@@ -24,7 +24,7 @@ type InitConfig struct {
 	MongoDBTimeout int
 }
 
-func NewInitConfig(ctx context.Context, dapr *Dapr) (InitConfig, error) {
+func NewInitConfig(ctx context.Context, dapr DaprClient) (InitConfig, error) {
 	// Get config items from config store.
 	var configurationItems = []string{
 		bunRouterDebugConfig, bunRouterPortConfig,
@@ -32,7 +32,7 @@ func NewInitConfig(ctx context.Context, dapr *Dapr) (InitConfig, error) {
 	}
 	configItems, err := dapr.daprClient.GetConfigurationItems(ctx, daprConfigStore, configurationItems)
 	if err != nil {
-		fmt.Println("Could not get config items from Dapr, err: ", err.Error())
+		fmt.Println("Could not get config items from DaprClient, err: ", err.Error())
 		return InitConfig{}, err
 	}
 

@@ -2,15 +2,15 @@ package xsetup
 
 import daprSdkClient "github.com/dapr/go-sdk/client"
 
-type Dapr struct {
+type DaprClient struct {
 	daprClient daprSdkClient.Client
 }
 
-func NewDaprClient() (*Dapr, error) {
+func NewDaprClient() (DaprClient, error) {
 	daprClient, err := daprSdkClient.NewClient()
 	if err != nil {
-		return &Dapr{}, err
+		return DaprClient{}, err
 	}
 
-	return &Dapr{daprClient: daprClient}, nil
+	return DaprClient{daprClient: daprClient}, nil
 }
