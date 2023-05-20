@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/cockroachdb/errors v1.9.1
 	github.com/dapr/go-sdk v1.7.0
+	github.com/google/wire v0.5.0
 	github.com/json-iterator/go v1.1.12
 	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
 	github.com/uptrace/bunrouter v1.0.20
@@ -23,7 +24,6 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
-	github.com/google/wire v0.5.0 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
