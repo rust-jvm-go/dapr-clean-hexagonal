@@ -65,7 +65,7 @@ func (r *MongoRepository) Find(code string) (*domain.Redirect, error) {
 	filter := bson.M{"code": code}
 	err := collection.FindOne(r.Ctx, filter).Decode(&redirect)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, errors.Wrap(domain.ErrRedirectNotFound, "repository.Redirect.Find")
 		}
 		return nil, errors.Wrap(err, "repository.Redirect.Find")
